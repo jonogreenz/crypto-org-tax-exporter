@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="./pico.min.css" />
+    <title>Crypto.org Chain Transaction Exporter</title>
+
+    <script src="./exporter.umd.js"></script>
+
+    <script>
+      function runSubmission(e) {
+        e.preventDefault();
+        const sb = document.getElementById("submit");
+        const adr = document.getElementById("address");
+
+        const form = new FormData(e.target);
+
+        // validate
+        const address = form.get("address");
+        if (!address.startsWith("cro", 0) || address.length < 42) {
+          adr.setAttribute("aria-invalid", true);
+          return;
+        }
+
+        const format = form.get("format");
+
+        adr.setAttribute("aria-invalid", false);
+        sb.setAttribute("aria-busy", true);
+        window.cryptoOrgTaxExporter.extractHistory(address).then((data) => {
+          adr.setAttribute("aria-invalid", undefined);
+          sb.setAttribute("aria-busy", false);
+
+          const formattedData =
+            window.cryptoOrgTaxExporter.formatCsvCryptoCom(data);
+
+          const element = document.createElement("a");
+          element.setAttribute(
+            "href",
+            "data:text/plain;charset=utf-8," + encodeURIComponent(formattedData)
+          );
+          element.setAttribute(
+            "download",
+            `Crypto_org_export_${format}_${Date.now()}`
+          );
+
+          element.style.display = "none";
+          document.body.appendChild(element);
+
+          element.click();
+
+          document.body.removeChild(element);
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <main class="container">
+      <div class="grid">
+        <div>
+          <h1>Crypto.org Tax & Reward Exporter</h1>
+          <div class="headings">
+            <h3>🏷️ Export your transactions</h3>
+            <h5>
+              Exports your transactions to CSV to allow manual upload to your
+              tax service
+            </h5>
+          </div>
+
+          <p>
+            Enter your Crypto.org Chain CRO address and download a csv file
+            containing the transactions. If a transaction type isn't present
+            please file an issue on
+            <a
+              href="https://github.com/jonogreenz/crypto-org-tax-exporter/issues"
+              >Github</a
+            >
+          </p>
+
+          <form onsubmit="return runSubmission(event)">
+            <label for="address">CRO Address</label>
+            <input
+              type="text"
+              id="address"
+              name="address"
+              placeholder="Crypto.org chain address..."
+              required
+            />
+
+            <label for="format">CSV Output Format</label>
+            <select id="format" name="format" required>
+              <option value="" selected>Select a format…</option>
+              <option selected>Crypto.com Tax</option>
+            </select>
+
+            <button id="submit" type="submit">Download</button>
+          </form>
+
+          <h1></h1>
+          <h5>🪁 Thanks</h5>
+          <p>
+            If you've found this tool useful, feel free to send through some CRO
+            to:
+          </p>
+          <p>
+            Address: <strong>cro1nvp4c4zat8wkt8ze3h6e097tefv9d9p494lk33</strong>
+          </p>
+          <img
+            src="https://api.qrserver.com/v1/create-qr-code/?data=cro1nvp4c4zat8wkt8ze3h6e097tefv9d9p494lk33&size=150x150&margin=5"
+            alt="address qr code"
+          />
+        </div>
+        <div></div>
+      </div>
+    </main>
+  </body>
+</html>

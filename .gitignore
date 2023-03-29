@@ -1,0 +1,6 @@
+public/exporter.*
+public/index.d.ts
+
+!public/exporter.umd.*
+
+node_modules

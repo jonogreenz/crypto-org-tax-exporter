@@ -61,8 +61,6 @@ async function parseTransactions(address: string, txs: any[]) {
         let data = {
           date: tx.blockTime,
           memo: tx.memo ? tx.memo + " " + tx.hash : tx.hash,
-          feeCurrency: "CRO",
-          feeAmount: convertBaseCroToCro(tx.fee[0]),
         } as any;
 
         switch (msg.type) {
@@ -71,6 +69,8 @@ async function parseTransactions(address: string, txs: any[]) {
               data.type = "send";
               data.sendCurrency = "CRO";
               data.sendAmount = convertBaseCroToCro(msg.content.amount[0]);
+              data.feeCurrency = "CRO";
+              data.feeAmount = convertBaseCroToCro(tx.fee[0]);
             } else {
               data.type = "receive";
               data.receiveCurrency = "CRO";
@@ -106,6 +106,8 @@ async function parseTransactions(address: string, txs: any[]) {
               data.sendAmount = convertBaseCroToCro(
                 msg.content.params.packetData.amount
               );
+              data.feeCurrency = "CRO";
+              data.feeAmount = convertBaseCroToCro(tx.fee[0]);
             } else {
               data.type = "receive";
               data.receiveCurrency = "CRO";

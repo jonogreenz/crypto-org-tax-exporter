@@ -66,13 +66,13 @@ async function parseTransactions(address: string, txs: any[]) {
         switch (msg.type) {
           case "/cosmos.bank.v1beta1.MsgSend":
             if (msg.content.fromAddress === address) {
-              data.type = "send";
+              data.type = "payment";
               data.sendCurrency = "CRO";
               data.sendAmount = convertBaseCroToCro(msg.content.amount[0]);
               data.feeCurrency = "CRO";
               data.feeAmount = convertBaseCroToCro(tx.fee[0]);
             } else {
-              data.type = "receive";
+              data.type = "payment";
               data.receiveCurrency = "CRO";
               data.receiveAmount = convertBaseCroToCro(msg.content.amount[0]);
             }
@@ -101,7 +101,7 @@ async function parseTransactions(address: string, txs: any[]) {
 
           case "/cosmos.ibc.v1beta1.MsgTransfer":
             if (msg.content.params.receiver === address) {
-              data.type = "send";
+              data.type = "transfer";
               data.sendCurrency = "CRO";
               data.sendAmount = convertBaseCroToCro(
                 msg.content.params.packetData.amount
@@ -109,7 +109,7 @@ async function parseTransactions(address: string, txs: any[]) {
               data.feeCurrency = "CRO";
               data.feeAmount = convertBaseCroToCro(tx.fee[0]);
             } else {
-              data.type = "receive";
+              data.type = "transfer";
               data.receiveCurrency = "CRO";
               data.receiveAmount = convertBaseCroToCro(msg.content.amount[0]);
             }
